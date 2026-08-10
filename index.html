@@ -74,7 +74,7 @@ function tab(x){['events','set','songs','schedule'].forEach(y=>document.getEleme
 function render(){renderEvents();renderSet();renderSongs();renderSchedule()}
 function renderEvents(){
  let h=`<div class="card"><div class="row"><b>演奏会</b><button onclick="openEvent()">＋ 新規</button></div>`;
- db.events.forEach(e=>h+=`<div class="item" style="cursor:pointer" onclick="selectEvent(${e.id})"><div class="row"><div><div class="title">${esc(e.name)}</div><div class="muted">開演 ${e.start}　${e.items.filter(i=>i.type==='song').length}曲</div></div><span style="font-size:22px;color:#999">›</span></div></div>`);
+ db.events.forEach(e=>h+=`<div class="item"><div class="row"><div><div class="title">${esc(e.name)}</div><div class="muted">開演 ${e.start}　${e.items.filter(i=>i.type==='song').length}曲</div></div><button class="secondary" onclick="selectEvent(${e.id})">開く</button></div></div>`);
  if(!db.events.length)h+=`<div class="empty">演奏会を登録してください。</div>`;h+=`</div>`;document.getElementById('events').innerHTML=h
 }
 function selectEvent(id){current=id;tab('set');render()}
