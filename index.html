@@ -183,26 +183,22 @@ function renderSchedule(){
  h+=`<div class="item"><b>${cur}</b>　終演予定</div></div>`;document.getElementById('schedule').innerHTML=h
 }
 
-function modalTitle(title){
-  return `
-    <div class="row" style="margin-bottom:12px">
-      <h2 style="margin:0">${title}</h2>
+function openAddMenu(){
+  let opts=db.songs.map(s=>
+    `<option value="${s.id}">${esc(s.name)} (${fmt(s.sec)})</option>`
+  ).join('');
 
-      <button
-        type="button"
-        onclick="close()"
-        style="
-          background:none;
-          color:#666;
-          font-size:24px;
-          padding:0;
-          width:32px;
-          height:32px;
-        ">
-        ✕
-      </button>
-    </div>
-  `;
+  modal(`
+    <h2>セットリストに追加</h2>
+    <button onclick="addSongItem()" style="width:100%;margin-bottom:8px">
+      🎵 曲を追加
+    </button>
+    <button class="secondary" onclick="openGap()" style="width:100%">
+      ⏱ 曲間・進行を追加
+    </button>
+    <label style="margin-top:15px">曲を選ぶ場合</label>
+    <select id="asi">${opts}</select>
+  `)
 }
   
 function modal(html){document.getElementById('sheet').innerHTML=html;document.getElementById('modal').classList.add('show')}
