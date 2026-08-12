@@ -75,41 +75,43 @@ let db=JSON.parse(localStorage.getItem(K)||'null')||{
 };
 let current=db.events[0]?.id||null;
 function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
-async function*save*loud() {
+async function saveCloud() {
 
-  const { error } = awai* supabaseClient
-   *.from('setlists')
+  const { error } = await supabaseClient
+    .from('setlists')
     .upsert([
       {
         id: '00000000-0000-0000-0000-000000000001',
         name: 'main',
         data: JSON.stringify(db),
-        updated_at: new Da*e().toISOString()
+        updated_at: new Date().toISOString()
       }
     ]);
-*  if(error){
-    console.error(err*r);
+
+  if(error){
+    console.error(error);
   }
 }
+
 async function loadCloud(){
 
   const { data, error } = await supabaseClient
     .from('setlists')
     .select('*')
-    .eq('id','00000000-0000-000*-0000-000000000001')
-    .single()*
+    .eq('id','00000000-0000-0000-0000-000000000001')
+    .single();
 
   if(error){
-    console.error(e*ror);
+    console.error(error);
     return;
   }
 
-  if(data?.*ata){
-    db = typeof data.data ==* 'string'
-      ? JSON.parse(data.*ata)
-      : data.data*
+  if(data?.data){
+    db = typeof data.data === 'string'
+      ? JSON.parse(data.data)
+      : data.data;
 
-    current = db.events?.[0]?.id*|| null;
+    current = db.events?.[0]?.id || null;
     render();
   }
 }
