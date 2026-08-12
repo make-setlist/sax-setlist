@@ -28,8 +28,7 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
 .badge{font-size:11px;background:#eee;padding:3px 7px;border-radius:99px;margin-left:5px}
 .schedule-time{font-size:15px;font-weight:700;min-width:48px}.schedule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
 </style>
-<script src="https://cdn.jsdelivrabase/supabase-js@2
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const supabase = window.supabase.createClient(
   "https://wxvowdcvkhltbooeudci.supabase.co",
@@ -92,18 +91,16 @@ function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
 }
   async function loadCloud(){
 
+  console.log("Supabase接続開始");
+
   const { data, error } = await supabase
     .from('setlists')
-    .select('*')
-    .eq('name','main')
-    .single();
+    .select('*');
 
-  if(data?.data){
-    db = data.data;
-    render();
-  }
+  console.log(data);
+  console.log(error);
 }
-
+  
 function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function ev(){return db.events.find(e=>e.id===current)||db.events[0]}
