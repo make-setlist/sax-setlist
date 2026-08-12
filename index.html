@@ -174,8 +174,9 @@ function renderSongs(){
 }
 function renderSchedule(){
  let e=ev();if(!e){document.getElementById('schedule').innerHTML='';return}
+  let songNo = 0;
  let cur=e.start,h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><span class="muted">進行表</span></div>`;
- e.items.forEach((it,i)=>{if(it.type==='song'){let s=song(it.songId),st=cur;h+=`<div class="schedule-item"><b class="schedule-time">${st}</b><div><div class="title">${i+1}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}</div></div></div>`;cur=addTime(cur,s?.sec||0)}
+ e.items.forEach((it,i)=>{if(it.type==='song'){let s=song(it.songId),st=cur;h+=`<div class="schedule-item"><b class="schedule-time">${st}</b><div><div class="title">${songNo}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}</div></div></div>`;cur=addTime(cur,s?.sec||0)}
  else {h+=`<div class="schedule-item"><b class="schedule-time">↓</b><div><div class="title">${esc(it.gapType)}</div><div class="muted">${fmt(it.sec)}</div></div></div>`;cur=addTime(cur,it.sec)}})
  h+=`<div class="item"><b>${cur}</b>　終演予定</div></div>`;document.getElementById('schedule').innerHTML=h
 }
