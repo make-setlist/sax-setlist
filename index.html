@@ -217,8 +217,28 @@ function openSong(){modal(`${modalTitle('曲を登録')}<label>曲名</label><in
 function addSong(){let n=document.getElementById('sn').value.trim(),sec=+document.getElementById('sm').value*60+(+document.getElementById('ss').value||0);if(!n)return alert('曲名を入力してください');db.songs.push({id:Date.now(),name:n,sec,ensemble:document.getElementById('se').value.trim()});save();close();render();tab('songs')}
 function editSong(id){let s=song(id);modal(`${modalTitle('曲を編集')}<label>曲名</label><input id="sn" value="${esc(s.name)}"><label>演奏時間</label><div class="row"><input id="sm" type="number" value="${Math.floor(s.sec/60)}"><input id="ss" type="number" value="${s.sec%60}"></div><label>編成</label><input id="se" value="${esc(s.ensemble||'')}"><div class="actions"><button class="danger" onclick="deleteSong(${id})">削除</button><button onclick="updateSong(${id})">保存</button></div>`)}
 function updateSong(id){let s=song(id);s.name=document.getElementById('sn').value.trim();s.sec=+document.getElementById('sm').value*60+(+document.getElementById('ss').value||0);s.ensemble=document.getElementById('se').value.trim();save();close();render()}
-function deleteSong(id){if(!confirm('曲を削除しますか？セットリストからも削除されます。'))return;db.songs=db.songs.filter(s=>s.id!=id);db.events.forEach(e=>e.items=e.items.filter(i=>i.type!=='song'||i.songId!=id));save();close();render()}
-function openAddMenu(){let opts=db.songs.map(s=>`<option value="${s.id}">${esc(s.name)} (${fmt(s.sec)})</option>`).join('');modal(`<h2>セットリストに追加</h2><button onclick="addSongItem()" style="width:100%;margin-bottom:8px">🎵 曲を追加</button><button class="secondary" onclick="openGap()" style="width:100%">⏱ 曲間・進行を追加</button><label style="margin-top:15px">曲を選ぶ場合</label><select id="asi">${opts}</select>`)}
+function deleteSong(id){if(!confirm('曲を削除しますか？セットリストからも削除されます。'))return;db.songs=db.songs.filter(s=>s.id!=id);db.events.forEach(e=>e.itemn>s=e.items.filter(i=>i.type!=='song'||i.songId!=id));save();close();render()}
+function openAddMenu(){
+  let opts=db.songs.map(s=>`<option value="${s.id}">${esc(s.name)} (${fmt(s.sec)})</option>`).join('');
+
+  modal(`
+    ${modalTitle('セットリストに追加')}
+
+    <button onclick="addSongItem()" style="width:100%;margin-bottom:8px">
+      🎵 曲を追加
+    </button>
+
+    <button class="secondary" onclick="openGap()" style="width:100%">
+      ⏱ 曲間・進行を追加
+    </button>
+
+    <label style="margin-top:15px">曲を選ぶ場合</label>
+
+    <select id="asi">
+      ${opts}
+    </select>
+  `);
+}
 function addSongItem(){let sid=+document.getElementById('asi').value;ev().items.push({id:Date.now(),type:'song',songId:sid});save();close();render();tab('set')}
 function openGap(){modal(`${modalTitle('曲間・進行を追加')}<label>種類</label><select id="gt"><option>MC</option><option>曲紹介</option><option>楽器持ち替え</option><option>譜面交換</option><option>準備</option><option>演出</option><option>その他</option></select><label>時間</label><div class="row"><input id="gm" type="number" value="1" min="0"><input id="gs" type="number" value="0" min="0" max="59"></div><div class="actions"><button onclick="addGap()">追加</button></div>`)}
 function addGap(){let sec=+document.getElementById('gm').value*60+(+document.getElementById('gs').value||0);ev().items.push({id:Date.now(),type:'gap',gapType:document.getElementById('gt').value,sec});save();close();render();tab('set')}
