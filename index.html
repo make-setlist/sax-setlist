@@ -176,6 +176,6 @@ function removeItem(id){ev().items=ev().items.filter(i=>i.id!==id);save();close(
 function editSongItem(id){let i=ev().items.find(x=>x.id===id),opts=db.songs.map(s=>`<option value="${s.id}" ${s.id==i.songId?'selected':''}>${esc(s.name)} (${fmt(s.sec)})</option>`).join('');modal(`<h2>曲を編集</h2><label>曲</label><select id="esi">${opts}</select><div class="actions"><button class="danger" onclick="removeItem(${id})">削除</button><button onclick="updateSongItem(${id})">保存</button></div>`)}
 function updateSongItem(id){ev().items.find(i=>i.id===id).songId=+document.getElementById('esi').value;save();close();render()}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')close()});
-render(); loadCloud();
+loadCloud();
 </script>
 </body></html>
