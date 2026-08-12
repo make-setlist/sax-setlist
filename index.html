@@ -156,8 +156,11 @@ function renderSet(){
  let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save();render()"></div>`;
  h+=`<div class="card"><div class="row"><b>セットリスト</b><button onclick="openAddMenu()">＋ 追加</button></div>`;
  if(!e.items.length)h+=`<div class="empty">曲を追加してください。</div>`;
+  let songNo = 0;
  e.items.forEach((it,i)=>{
-  if(it.type==='song'){let s=song(it.songId);h+=`<div class="item" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})"><div class="row"><div style="display:flex;align-items:center"><span class="grab">☰</span><div><div class="title">${i+1}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}${s?.ensemble?` <span class="badge">${esc(s.ensemble)}</span>`:''}</div></div></div><button class="secondary" onclick="editSongItem(${it.id})">編集</button></div></div>`}
+  if(it.type==='song'){
+    songNo++;
+    let s=song(it.songId);h+=`<div class="item" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})"><div class="row"><div style="display:flex;align-items:center"><span class="grab">☰</span><div><div class="title">${i+1}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}${s?.ensemble?` <span class="badge">${esc(s.ensemble)}</span>`:''}</div></div></div><button class="secondary" onclick="editSongItem(${it.id})">編集</button></div></div>`}
   else h+=`<div class="gap" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})">↓ ${esc(it.gapType)}　${fmt(it.sec)} <button class="secondary" style="float:right;padding:5px 8px" onclick="editGap(${it.id})">編集</button><div style="clear:both"></div></div>`
  });
  h+=`</div><div class="card"><div class="row"><span>演奏時間</span><span>${fmt(t.music)}</span></div><div class="row"><span>曲間・進行</span><span>${fmt(t.gap)}</span></div><hr><div class="row"><span class="total">合計</span><span class="total">${fmt(t.total)}</span></div><div class="end">終演予定　${addTime(e.start,t.total)}</div></div>`;
