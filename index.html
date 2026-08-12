@@ -28,6 +28,12 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
 .badge{font-size:11px;background:#eee;padding:3px 7px;border-radius:99px;margin-left:5px}
 .schedule-time{font-size:15px;font-weight:700;min-width:48px}.schedule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
 </style>
+ <script src="https://cdn.jsdelivr.net/npmpabase-js@2
+  const supabase = window.supabase.createClient(
+  "https://wxvowdcvkhltbooeudci.supabase.co",
+  "sb_publishable_RgoHZbieMvYVY21y-66LsA_PI6pe79M"
+);
+``
 </head>
 <body>
 <header><h1>🎷 Sax Setlist</h1><div class="sub">サックスアンサンブル用・演奏会セットリスト</div></header>
@@ -63,7 +69,39 @@ let db=JSON.parse(localStorage.getItem(K)||'null')||{
  ]}]
 };
 let current=db.events[0]?.id||null;
-function save(){localStorage.setItem(K,JSON.stringify(db))}
+function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
+  async function saveCloud() {
+
+  const { error } = await supabase
+    .from('setlists')
+    .upsert([
+      {
+        id: '00000000-0000-0000-0000-000000000001',
+        name: 'main',
+        data: db,
+        updated_at: new Date().toISOString()
+      }
+    ]);
+
+  if(error){
+    console.error(error);
+    alert('クラウド保存失敗');
+  }
+}
+  async function loadCloud(){
+
+  const { data, error } = await supabase
+    .from('setlists')
+    .select('*')
+    .eq('name','main')
+    .single();
+
+  if(data?.data){
+    db = data.data;
+    render();
+  }
+}
+
 function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function ev(){return db.events.find(e=>e.id===current)||db.events[0]}
@@ -125,6 +163,6 @@ function removeItem(id){ev().items=ev().items.filter(i=>i.id!==id);save();close(
 function editSongItem(id){let i=ev().items.find(x=>x.id===id),opts=db.songs.map(s=>`<option value="${s.id}" ${s.id==i.songId?'selected':''}>${esc(s.name)} (${fmt(s.sec)})</option>`).join('');modal(`<h2>曲を編集</h2><label>曲</label><select id="esi">${opts}</select><div class="actions"><button class="danger" onclick="removeItem(${id})">削除</button><button onclick="updateSongItem(${id})">保存</button></div>`)}
 function updateSongItem(id){ev().items.find(i=>i.id===id).songId=+document.getElementById('esi').value;save();close();render()}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')close()});
-render();
+render(); loadCloud();
 </script>
 </body></html>
