@@ -68,7 +68,7 @@ function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function ev(){return db.events.find(e=>e.id===current)||db.events[0]}
 function song(id){return db.songs.find(s=>s.id==id)}
-function addTime(t,sec){let [h,m]=t.split(':').map(Number),n=(h*60+m)+Math.round(sec/60);n%=1440;return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
+function addTime(t,sec){let [h,m]=t.split(':').map(Number),n=(h*60+m)+Math.ceil(sec/60);n%=1440;return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
 function totals(){let e=ev(),music=0,gap=0;e?.items.forEach(i=>i.type==='song'?music+=song(i.songId)?.sec||0:gap+=i.sec||0);return{music,gap,total:music+gap}}
 function tab(x){['events','set','songs','schedule'].forEach(y=>document.getElementById(y).classList.toggle('hidden',x!==y));['tEvents','tSet','tSongs','tSchedule'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',x===['events','set','songs','schedule'][i]));if(x==='set'&&!ev())tab('events')}
 function render(){renderEvents();renderSet();renderSongs();renderSchedule()}
