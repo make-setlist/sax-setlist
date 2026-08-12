@@ -41,7 +41,20 @@ const supabaseClient = window.supabase.createClient(
 </head>
 
 <body>
-<header><h1>🎷 Sax Setlist</h1><div class="sub">サックスアンサンブル用・演奏会セットリスト</div></header>
+<header>
+  <div class="row">
+    <div>
+      <h1>🎷 Sax Setlist</h1>
+      <div class="sub">サックスアンサンブル用・演奏会セットリスト</div>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadCloud()">
+      🔄同期
+    </button>
+  </div>
+</header>
 <main>
 <div class="tabs">
 <button id="tEvents" class="active" onclick="tab('events')">演奏会</button>
