@@ -77,20 +77,22 @@ let current=db.events[0]?.id||null;
 function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
   async function saveCloud() {
 
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('setlists')
-    .upsert([
+    .insert([
       {
-        id: '00000000-0000-0000-0000-000000000001',
         name: 'main',
-        data: db,
-        updated_at: new Date().toISOString()
+        data: db
       }
     ]);
 
+  console.log(data);
+  console.log(error);
+
   if(error){
-    console.error(error);
-    alert('クラウド保存失敗');
+    alert('保存失敗');
+  }else{
+    alert('保存成功');
   }
 }
   async function loadCloud(){
