@@ -142,7 +142,33 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function ev(){return db.events.find(e=>e.id===current)||db.events[0]}
 function song(id){return db.songs.find(s=>s.id==id)}
 function addTime(t,sec){let [h,m]=t.split(':').map(Number),n=(h*60+m)+Math.ceil(sec/60);n%=1440;return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
-function totals(){let e=ev(),music=0,gap=0;e?.items.forEach(i=>i.type==='song'?music+=song(i.songId)?.sec||0:gap+=i.sec||0);return{music,gap,total:music+gap}}
+function totals(){
+
+  let e=ev();
+
+  if(!e){
+    return {music:0,gap:0,total:0,mcCount:0};
+  }
+
+  const songs=e.items.filter(i=>i.type==='song');
+
+  let music=0;
+
+  songs.forEach(i=>{
+    music += song(i.songId)?.sec || 0;
+  });
+
+  const mcCount = Math.max(0, songs.length - 1);
+
+  const gap = mcCount * (e.mcSec || 0);
+
+  return {
+    music,
+    gap,
+    total: music + gap,
+    mcCount
+  };
+}
 function tab(x){['events','set','songs','schedule'].forEach(y=>document.getElementById(y).classList.toggle('hidden',x!==y));['tEvents','tSet','tSongs','tSchedule'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',x===['events','set','songs','schedule'][i]));if(x==='set'&&!ev())tab('events')}
 function render(){renderEvents();renderSet();renderSongs();renderSchedule()}
 function renderEvents(){
@@ -153,7 +179,10 @@ function renderEvents(){
 function selectEvent(id){current=id;tab('set');render()}
 function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
- let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save();render()"></div>`;
+ let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save();render()">
+ <label>MC時間（1回あたり）</label>
+ <div class="muted">${fmt(e.mcSec || 0)}</div>
+ </div>`;
  h+=`<div class="card"><div class="row"><b>セットリスト</b><button onclick="openAddMenu()">＋ 追加</button></div>`;
  if(!e.items.length)h+=`<div class="empty">曲を追加してください。</div>`;
   let songNo = 0;
@@ -163,7 +192,15 @@ function renderSet(){
     let s=song(it.songId);h+=`<div class="item" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})"><div class="row"><div style="display:flex;align-items:center"><span class="grab">☰</span><div><div class="title">${songNo}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}${s?.ensemble?` <span class="badge">${esc(s.ensemble)}</span>`:''}</div></div></div><button class="secondary" onclick="editSongItem(${it.id})">編集</button></div></div>`}
   else h+=`<div class="gap" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})">↓ ${esc(it.gapType)}　${fmt(it.sec)} <button class="secondary" style="float:right;padding:5px 8px" onclick="editGap(${it.id})">編集</button><div style="clear:both"></div></div>`
  });
- h+=`</div><div class="card"><div class="row"><span>演奏時間</span><span>${fmt(t.music)}</span></div><div class="row"><span>曲間・進行</span><span>${fmt(t.gap)}</span></div><hr><div class="row"><span class="total">合計</span><span class="total">${fmt(t.total)}</span></div><div class="end">終演予定　${addTime(e.start,t.total)}</div></div>`;
+ h+=`</div><div class="card"><div class="row"><span>演奏時間</span><span>${fmt(t.music)}</span></div>
+
+ <div class="row">
+    <span>
+      MC (${t.mcCount}回 × ${fmt(e.mcSec||0)})
+    </span>
+    <span>${fmt(t.gap)}</span>
+</div>
+ <hr><div class="row"><span class="total">合計</span><span class="total">${fmt(t.total)}</span></div><div class="end">終演予定　${addTime(e.start,t.total)}</div></div>`;
  document.getElementById('set').innerHTML=h
 }
 let drag=null;function drop(to){if(drag===null||drag===to)return;let e=ev(),a=e.items.splice(drag,1)[0];e.items.splice(to,0,a);drag=null;save();render()}
