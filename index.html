@@ -79,13 +79,18 @@ let db=JSON.parse(localStorage.getItem(K)||'null')||{
  {id:3,name:'スーパーマリオブラザーズ',sec:220,ensemble:'S / A / T / B'},
  {id:4,name:'ジャパニーズ・グラフィティ VI',sec:380,ensemble:'S / A / T / B'}
  ],
- events:[{id:1,name:'2026 熊本地震チャリティーコンサート',start:'14:00',mcSec:60,items:[
-  {id:11,type:'song',songId:3},{id:12,type:'gap',gapType:'MC',sec:90},
-  {id:13,type:'song',songId:1},{id:14,type:'gap',gapType:'曲紹介',sec:60},
-  {id:15,type:'song',songId:2},{id:16,type:'gap',gapType:'楽器持ち替え',sec:30},
+ events:[{id:1,name:'2026 熊本地震チャリティーコンサート',start:'14:00',mcSec:60,
+items:[
+  {id:11,type:'song',songId:3},
+  {id:13,type:'song',songId:1},
+  {id:15,type:'song',songId:2},
   {id:17,type:'song',songId:4}
- ]}]
+]
+         }]
 };
+
+  normalizeData();
+  
 let current=db.events[0]?.id||null;
 function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
 async function saveCloud() {
@@ -123,7 +128,7 @@ if(data?.data){
   db = typeof data.data === 'string'
     ? JSON.parse(data.data)
     : data.data;
-
+normalizeData();
   current = db.events?.[0]?.id || null;
   render();
 
@@ -142,7 +147,17 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function ev(){return db.events.find(e=>e.id===current)||db.events[0]}
 function song(id){return db.songs.find(s=>s.id==id)}
 function addTime(t,sec){let [h,m]=t.split(':').map(Number),n=(h*60+m)+Math.ceil(sec/60);n%=1440;return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
-function totals(){
+function normalizeData(){
+  db.events.forEach(e=>{
+    if(e.mcSec == null){
+      e.mcSec = 60;
+    }
+
+    e.items = e.items.filter(i=>i.type==='song');
+  });
+}
+  
+  function totals(){
 
   let e=ev();
 
@@ -190,7 +205,6 @@ function renderSet(){
   if(it.type==='song'){
     songNo++;
     let s=song(it.songId);h+=`<div class="item" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})"><div class="row"><div style="display:flex;align-items:center"><span class="grab">☰</span><div><div class="title">${songNo}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}${s?.ensemble?` <span class="badge">${esc(s.ensemble)}</span>`:''}</div></div></div><button class="secondary" onclick="editSongItem(${it.id})">編集</button></div></div>`}
-  else h+=`<div class="gap" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})">↓ ${esc(it.gapType)}　${fmt(it.sec)} ${it.memo?`<div style="margin-top:4px;color:#666">${esc(it.memo)}</div>`:''}<button class="secondary" style="float:right;padding:5px 8px" onclick="editGap(${it.id})">編集</button><div style="clear:both"></div></div>` 
  });
  h+=`</div><div class="card"><div class="row"><span>演奏時間</span><span>${fmt(t.music)}</span></div>
 
@@ -210,14 +224,48 @@ function renderSongs(){
  h+=`</div>`;document.getElementById('songs').innerHTML=h
 }
 function renderSchedule(){
- let e=ev();if(!e){document.getElementById('schedule').innerHTML='';return}
+  let e=ev();
+
+  if(!e){
+    document.getElementById('schedule').innerHTML='';
+    return;
+  }
+
+  let songs = e.items.filter(i=>i.type==='song');
   let songNo = 0;
- let cur=e.start,h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><span class="muted">進行表</span></div>`;
- e.items.forEach((it,i)=>{if(it.type==='song'){
-   songNo++;
-   let s=song(it.songId),st=cur;h+=`<div class="schedule-item"><b class="schedule-time">${st}</b><div><div class="title">${songNo}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}</div></div></div>`;cur=addTime(cur,s?.sec||0)}
- else {h+=`<div class="schedule-item"><b class="schedule-time">↓</b><div><div class="title">${esc(it.gapType)}</div><div class="muted">${fmt(it.sec)}</div></div></div>`;cur=addTime(cur,it.sec)}})
- h+=`<div class="item"><b>${cur}</b>　終演予定</div></div>`;document.getElementById('schedule').innerHTML=h
+  let cur = e.start;
+
+  let h=`<div class="card">
+    <div class="row">
+      <b>${esc(e.name)}</b>
+      <span class="muted">進行表</span>
+    </div>`;
+
+  songs.forEach((it,index)=>{
+    songNo++;
+
+    let s=song(it.songId);
+    let st=cur;
+
+    h+=`<div class="schedule-item">
+      <b class="schedule-time">${st}</b>
+      <div>
+        <div class="title">${songNo}. ${esc(s?.name)}</div>
+        <div class="muted">${fmt(s?.sec||0)}</div>
+      </div>
+    </div>`;
+
+    cur=addTime(cur,s?.sec||0);
+
+    // 最後の曲以外は、表示しないMC時間を加算
+    if(index < songs.length - 1){
+      cur=addTime(cur,e.mcSec||0);
+    }
+  });
+
+  h+=`<div class="item"><b>${cur}</b>　終演予定</div></div>`;
+
+  document.getElementById('schedule').innerHTML=h;
 }
 
 function openAddMenu(){
@@ -227,17 +275,15 @@ function openAddMenu(){
 
   modal(`
     <h2>セットリストに追加</h2>
-    <button onclick="addSongItem()" style="width:100%;margin-bottom:8px">
-      🎵 曲を追加
-    </button>
-    <button class="secondary" onclick="openGap()" style="width:100%">
-      ⏱ 曲間・進行を追加
-    </button>
-    <label style="margin-top:15px">曲を選ぶ場合</label>
+
+    <label>追加する曲</label>
     <select id="asi">${opts}</select>
+
+    <div class="actions">
+      <button onclick="addSongItem()">🎵 曲を追加</button>
+    </div>
   `)
 }
-
   function modalTitle(title){
   return `
     <div class="row" style="margin-bottom:12px">
@@ -329,7 +375,7 @@ function editEvent(){
     </div>
   `)
 }
-``
+
 function updateEvent(){
   let e=ev();
 
