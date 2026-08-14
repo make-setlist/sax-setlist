@@ -27,6 +27,22 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
 .sheet h2{margin:0 0 12px;font-size:19px}.actions{display:flex;gap:8px;margin-top:15px}.actions>*{flex:1}
 .badge{font-size:11px;background:#eee;padding:3px 7px;border-radius:99px;margin-left:5px}
 .schedule-time{font-size:15px;font-weight:700;min-width:48px}.schedule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
+.print-schedule .schedule-item{
+  padding:4px 0;
+  gap:8px;
+  align-items:center;
+}
+
+.print-schedule .schedule-time{
+  min-width:50px;
+  font-size:13px;
+}
+
+.print-schedule .title{
+  font-size:13px;
+  line-height:1.2;
+  font-weight:500;
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -247,7 +263,7 @@ function renderSchedule(){
   let songNo = 0;
   let cur = e.start;
 
-  let h=`<div class="card">
+  let h=`<div class="card print-schedule">
     <div class="row">
       <b>${esc(e.name)}</b>
       <span class="muted">進行表</span>
@@ -259,13 +275,15 @@ function renderSchedule(){
     let s=song(it.songId);
     let st=cur;
 
-    h+=`<div class="schedule-item">
-      <b class="schedule-time">${st}</b>
-      <div>
-        <div class="title">${songNo}. ${esc(s?.name)}</div>
-        <div class="muted">${fmt(s?.sec||0)}</div>
-      </div>
-    </div>`;
+h+=`<div class="schedule-item">
+  <b class="schedule-time">${st}</b>
+  <div class="title">
+    ${songNo}. ${esc(s?.name)}
+    <span style="color:#666">
+      （${fmt(s?.sec||0)}）
+    </span>
+  </div>
+</div>`;
 
     cur=addTime(cur,s?.sec||0);
 
