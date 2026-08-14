@@ -190,7 +190,7 @@ function renderSet(){
   if(it.type==='song'){
     songNo++;
     let s=song(it.songId);h+=`<div class="item" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})"><div class="row"><div style="display:flex;align-items:center"><span class="grab">☰</span><div><div class="title">${songNo}. ${esc(s?.name)}</div><div class="muted">${fmt(s?.sec||0)}${s?.ensemble?` <span class="badge">${esc(s.ensemble)}</span>`:''}</div></div></div><button class="secondary" onclick="editSongItem(${it.id})">編集</button></div></div>`}
-  else h+=`<div class="gap" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})">↓ ${esc(it.gapType)}　${fmt(it.sec)} <button class="secondary" style="float:right;padding:5px 8px" onclick="editGap(${it.id})">編集</button><div style="clear:both"></div></div>`
+  else h+=`<div class="gap" draggable="true" ondragstart="drag=${i}" ondragover="event.preventDefault()" ondrop="drop(${i})">↓ ${esc(it.gapType)}　${fmt(it.sec)} ${it.memo?`<div style="margin-top:4px;color:#666">${esc(it.memo)}</div>`:''}<button class="secondary" style="float:right;padding:5px 8px" onclick="editGap(${it.id})">編集</button><div style="clear:both"></div></div>` 
  });
  h+=`</div><div class="card"><div class="row"><span>演奏時間</span><span>${fmt(t.music)}</span></div>
 
