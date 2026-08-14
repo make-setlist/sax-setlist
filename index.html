@@ -261,7 +261,9 @@ function renderSchedule(){
 
   let songs = e.items.filter(i=>i.type==='song');
   let songNo = 0;
-  let cur = e.start;
+
+  // 開演時刻からの経過秒数
+  let curSec = 0;
 
   let h=`<div class="card print-schedule">
     <div class="row">
@@ -273,27 +275,30 @@ function renderSchedule(){
     songNo++;
 
     let s=song(it.songId);
-    let st=cur;
 
-h+=`<div class="schedule-item">
-  <b class="schedule-time">${st}</b>
-  <div class="title">
-    ${songNo}. ${esc(s?.name)}
-    <span style="color:#666">
-      （${fmt(s?.sec||0)}）
-    </span>
-  </div>
-</div>`;
+    // 表示するときだけ、開演時刻 + 経過秒数 で計算
+    let st=addTime(e.start, curSec);
 
-    cur=addTime(cur,s?.sec||0);
+    h+=`<div class="schedule-item">
+      <b class="schedule-time">${st}</b>
+      <div class="title">
+        ${songNo}. ${esc(s?.name)}
+        <span style="color:#666">
+          （${fmt(s?.sec||0)}）
+        </span>
+      </div>
+    </div>`;
 
-    // 最後の曲以外は、表示しないMC時間を加算
+    // 曲の秒数をそのまま加算
+    curSec += s?.sec || 0;
+
+    // 最後の曲以外はMC時間を秒数のまま加算
     if(index < songs.length - 1){
-      cur=addTime(cur,e.mcSec||0);
+      curSec += e.mcSec || 0;
     }
   });
 
-  h+=`<div class="item"><b>${cur}</b>　終演予定</div></div>`;
+  h+=`<div class="item"><b>${addTime(e.start, curSec)}</b>　終演予定</div></div>`;
 
   document.getElementById('schedule').innerHTML=h;
 }
