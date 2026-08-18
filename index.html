@@ -43,6 +43,25 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
   line-height:1.2;
   font-weight:500;
 }
+  .time-picker{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:8px;
+}
+
+.time-picker select{
+  font-size:22px;
+  padding:14px;
+  text-align:center;
+}
+
+.time-display-button{
+  width:100%;
+  font-size:22px;
+  padding:14px;
+  border-radius:12px;
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -238,7 +257,11 @@ function updateStartTime(value){
   
   function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
- let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${esc(e.start)}" onchange="updateStartTime(this.value)">
+ let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div>
+ <label>開演時刻</label>
+ <button class="secondary" onclick="openStartTimePicker()">
+  ${esc(e.start)}
+</button>
  <label>MC時間（1回あたり）</label>
  <div class="muted">${fmt(e.mcSec || 0)}</div>
  </div>`;
