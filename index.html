@@ -133,7 +133,7 @@ const supabaseClient = window.supabase.createClient(
 const K='sax_setlist_v2';
 
 let db = JSON.parse(localStorage.getItem(K) || 'null') || {
-  songs[ [],
+  songs: [],
   events: []
 };
 
