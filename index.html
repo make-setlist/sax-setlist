@@ -268,7 +268,7 @@ function updateStartTime(value){
   }
 
   let minuteOptions = '';
-  for(let m = 0; m < 60; m++){
+  for(let m = 0; m < 60; m += 5){
     const v = String(m).padStart(2, '0');
     minuteOptions += `<option value="${v}" ${v === minute ? 'selected' : ''}>${v}分</option>`;
   }
