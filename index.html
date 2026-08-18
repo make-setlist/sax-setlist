@@ -118,11 +118,11 @@ const supabaseClient = window.supabase.createClient(
 <div class="tabs">
 <button id="tEvents" class="active" onclick="tab('events')">演奏会</button>
 <button id="tSet" onclick="tab('set')">セットリスト</button>
-<button id="tSongs" onclick="tab('songs')">曲ライブラリ</button>
+<button id="t" onclick="tab('')">曲ライブラリ</button>
 <button id="tSchedule" onclick="tab('schedule')">進行表</button>
 </div>
 <section id="events"></section><section id="set" class="hidden"></section>
-<section id="songs" class="hidden"></section><section id="schedule" class="hidden"></section>
+<section id="" class="hidden"></section><section id="schedule" class="hidden"></section>
 </main>
 <div class="bottom">
 <button onclick="openEvent()">＋ 演奏会</button><button class="secondary" onclick="openSong()">＋ 曲を登録</button>
@@ -131,23 +131,11 @@ const supabaseClient = window.supabase.createClient(
 
 <script>
 const K='sax_setlist_v2';
-let db=JSON.parse(localStorage.getItem(K)||'null')||{
- songs:[
- {id:1,name:'宝島',sec:270,ensemble:'S / A / T / B'},
- {id:2,name:'アメリカン・サリュート',sec:240,ensemble:'S / A / T / B'},
- {id:3,name:'スーパーマリオブラザーズ',sec:220,ensemble:'S / A / T / B'},
- {id:4,name:'ジャパニーズ・グラフィティ VI',sec:380,ensemble:'S / A / T / B'}
- ],
- events:[{id:1,name:'2026 熊本地震チャリティーコンサート',start:'14:00',mcSec:60,
-items:[
-  {id:11,type:'song',songId:3},
-  {id:13,type:'song',songId:1},
-  {id:15,type:'song',songId:2},
-  {id:17,type:'song',songId:4}
-]
-         }]
-};
 
+let db=JSON.parse(localStorage.getItem(K)||'null')||{
+  songs[{id
+  events:[]
+};
   normalizeData();
   
 let current=db.events[0]?.id||null;
