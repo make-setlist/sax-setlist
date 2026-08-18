@@ -371,12 +371,18 @@ function setMcTime(){
   
 function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
+
  let t=totals(),h=`<div class="card">
   <div class="row">
-    <b>${esc(e.name)}</b>
-    <button class="secondary" onclick="editEvent()">編集</button>
+    <b
+      style="cursor:pointer;text-decoration:underline;text-underline-offset:3px"
+      onclick="editEvent()"
+      title="タップして演奏会名を編集"
+    >
+      ${esc(e.name)}
+    </b>
   </div>
-
+      
   <div class="event-settings">
     <div class="setting-block">
       <label>開演時刻</label>
@@ -603,21 +609,13 @@ function addEvent(){
   render();
   tab('set');
 }
+
 function editEvent(){
   let e=ev();
 
   modal(`${modalTitle('演奏会を編集')}
     <label>演奏会名</label>
     <input id="en" value="${esc(e.name)}">
-
-    <label>開演時刻</label>
-    ${timeSelectHtml(e.start, 'et')}
-
-    <label>MC時間（1回あたり）</label>
-    <div class="row">
-      <input id="emcm" type="number" min="0" value="${Math.floor((e.mcSec||0)/60)}">
-      <input id="emcs" type="number" min="0" max="59" value="${(e.mcSec||0)%60}">
-    </div>
 
     <div class="actions">
       <button class="danger" onclick="deleteEvent()">削除</button>
@@ -626,21 +624,23 @@ function editEvent(){
   `)
 }
 
+
 function updateEvent(){
   let e=ev();
 
-  e.name=document.getElementById('en').value.trim();
-  e.start=getTimeValue('et');
+  const name = document.getElementById('en').value.trim();
 
-  e.mcSec =
-    +document.getElementById('emcm').value * 60 +
-    (+document.getElementById('emcs').value || 0);
+  if(!name){
+    return alert('演奏会名を入力してください');
+  }
+
+  e.name = name;
 
   save();
   modalClose();
   render();
 }
-  function deleteEvent(){if(db.events.length===1)return alert('最後の演奏会は削除できません');if(!confirm('この演奏会を削除しますか？'))return;db.events=db.events.filter(x=>x.id!==current);current=db.events[0].id;save();modalClose();render();tab('events')}
+function deleteEvent(){if(db.events.length===1)return alert('最後の演奏会は削除できません');if(!confirm('この演奏会を削除しますか？'))return;db.events=db.events.filter(x=>x.id!==current);current=db.events[0].id;save();modalClose();render();tab('events')}
 function openSong(){
   modal(`
     ${modalTitle('曲を登録')}
