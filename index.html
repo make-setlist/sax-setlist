@@ -122,7 +122,7 @@ const supabaseClient = window.supabase.createClient(
 <button id="tSchedule" onclick="tab('schedule')">進行表</button>
 </div>
 <section id="events"></section><section id="set" class="hidden"></section>
-<section id="" class="hidden"></section><section id="schedule" class="hidden"></section>
+<section id="songs" class="hidden"></section><section id="schedule" class="hidden"></section>
 </main>
 <div class="bottom">
 <button onclick="openEvent()">＋ 演奏会</button><button class="secondary" onclick="openSong()">＋ 曲を登録</button>
@@ -132,12 +132,12 @@ const supabaseClient = window.supabase.createClient(
 <script>
 const K='sax_setlist_v2';
 
-let db=JSON.parse(localStorage.getItem(K)||'null')||{
-  songs[],
-  events:[]
+let db = JSON.parse(localStorage.getItem(K) || 'null') || {
+  songs[ [],
+  events: []
 };
-  normalizeData();
-  
+
+normalizeData();  
 let current=db.events[0]?.id||null;
 function save(){localStorage.setItem(K,JSON.stringify(db));saveCloud();}
 async function saveCloud() {
