@@ -56,12 +56,6 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
   text-align:center;
 }
 
-.time-picker input{
-  font-size:22px;
-  padding:14px;
-  text-align:center;
-}
-
 .time-display-button{
   width:100%;
   font-size:22px;
@@ -85,7 +79,13 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
   padding:14px;
   border-radius:12px;
 }
-``
+
+.mc-time-select{
+  font-size:22px;
+  padding:14px;
+  text-align:center;
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -347,25 +347,24 @@ function openMcTimePicker(){
 
   if(!eventData) return;
 
-  const mcSec = eventData.mcSec || 0;
-  const minute = Math.floor(mcSec / 60);
-  const second = mcSec % 60;
+  const currentMcSec = eventData.mcSec || 60;
+
+  const mcOptions = [];
+  for(let sec = 60; sec <= 300; sec += 30){
+    mcOptions.push(`
+      <option value="${sec}" ${sec === currentMcSec ? 'selected' : ''}>
+        ${fmt(sec)}
+      </option>
+    `);
+  }
 
   modal(`
     ${modalTitle('MC時間を設定')}
 
-
-<div class="time-picker">
-  <div>
-    <label>分</label>
-    <input id="mcMinute" type="number" min="0" value="${minute}">
-  </div>
-
-  <div>
-    <label>秒</label>
-    <input id="mcSecond" type="number" min="0" max="59" value="${second}">
-  </div>
-</div>
+    <label>MC時間（1回あたり）</label>
+    <select id="mcTimeSelect" class="mc-time-select">
+      ${mcOptions.join('')}
+    </select>
 
     <div class="actions">
       <button class="secondary" onclick="modalClose()">キャンセル</button>
@@ -375,15 +374,13 @@ function openMcTimePicker(){
 }
 
 function setMcTime(){
-  const minute = +document.getElementById('mcMinute').value || 0;
-  let second = +document.getElementById('mcSecond').value || 0;
+  const sec = +document.getElementById('mcTimeSelect').value;
 
-  second = Math.max(0, Math.min(59, second));
-
-  updateMcTime(minute * 60 + second);
+  updateMcTime(sec);
 
   modalClose();
 }
+  
 function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
  let t=totals(),h=`<div class="card">
