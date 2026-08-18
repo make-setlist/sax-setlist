@@ -435,13 +435,53 @@ function openAddMenu(){
 function modal(html){document.getElementById('sheet').innerHTML=html;document.getElementById('modal').classList.add('show')}
   
 function modalClose(){document.getElementById('modal').classList.remove('show')}
+function timeSelectHtml(value, prefix){
+  let [hour, minute] = (value || '14:00').split(':');
+
+  let hourOptions = '';
+  for(let h = 0; h < 24; h++){
+    const v = String(h).padStart(2, '0');
+    hourOptions += `<option value="${v}" ${v === hour ? 'selected' : ''}>${v}時</option>`;
+  }
+
+  let minuteOptions = '';
+  for(let m = 0; m < 60; m++){
+    const v = String(m).padStart(2, '0');
+    minuteOptions += `<option value="${v}" ${v === minute ? 'selected' : ''}>${v}分</option>`;
+  }
+
+  return `
+    <div class="time-picker">
+      <div>
+        <label>時</label>
+        <select id="${prefix}Hour">
+          ${hourOptions}
+        </select>
+      </div>
+
+      <div>
+        <label>分</label>
+        <select id="${prefix}Minute">
+          ${minuteOptions}
+        </select>
+      </div>
+    </div>
+  `;
+}
+
+function getTimeValue(prefix){
+  const h = document.getElementById(`${prefix}Hour`).value;
+  const m = document.getElementById(`${prefix}Minute`).value;
+
+  return `${h}:${m}`;
+}
 function openEvent(){
   modal(`${modalTitle('演奏会を登録')}
     <label>演奏会名</label>
     <input id="en" placeholder="例：2026 熊本地震チャリティーコンサート">
 
     <label>開演時刻</label>
-    <input id="et" type="time" value="14:00">
+    ${timeSelectHtml('14:00', 'et')}
 
     <label>MC時間（1回あたり）</label>
     <div class="row">
@@ -468,7 +508,7 @@ function addEvent(){
   let e={
     id:Date.now(),
     name,
-    start:document.getElementById('et').value,
+    start:getTimeValue('et'),
     mcSec,
     items:[]
   };
@@ -488,7 +528,7 @@ function editEvent(){
     <input id="en" value="${esc(e.name)}">
 
     <label>開演時刻</label>
-    <input id="et" type="time" value="${e.start}">
+    ${timeSelectHtml(e.start, 'et')}
 
     <label>MC時間（1回あたり）</label>
     <div class="row">
@@ -507,7 +547,7 @@ function updateEvent(){
   let e=ev();
 
   e.name=document.getElementById('en').value.trim();
-  e.start=document.getElementById('et').value;
+  e.start=getTimeValue('et');
 
   e.mcSec =
     +document.getElementById('emcm').value * 60 +
