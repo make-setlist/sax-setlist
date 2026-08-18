@@ -498,7 +498,7 @@ function editSongItem(id){let i=ev().items.find(x=>x.id===id),opts=db.songs.map(
 function updateSongItem(id){ev().items.find(i=>i.id===id).songId=+document.getElementById('esi').value;save();modalClose();render()}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')modalClose()});
 loadCloud();
-  window.addEventListener('focus', loadCloud);
+//  window.addEventListener('focus', loadCloud);
 
 </script>
 </body></html>
