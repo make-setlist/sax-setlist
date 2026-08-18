@@ -56,6 +56,12 @@ input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;fon
   text-align:center;
 }
 
+.time-picker input{
+  font-size:22px;
+  padding:14px;
+  text-align:center;
+}
+
 .time-display-button{
   width:100%;
   font-size:22px;
@@ -348,17 +354,18 @@ function openMcTimePicker(){
   modal(`
     ${modalTitle('MC時間を設定')}
 
-    <div class="row">
-      <div>
-        <label>分</label>
-        <input id="mcMinute" type="number" min="0" value="${minute}">
-      </div>
 
-      <div>
-        <label>秒</label>
-        <input id="mcSecond" type="number" min="0" max="59" value="${second}">
-      </div>
-    </div>
+<div class="time-picker">
+  <div>
+    <label>分</label>
+    <input id="mcMinute" type="number" min="0" value="${minute}">
+  </div>
+
+  <div>
+    <label>秒</label>
+    <input id="mcSecond" type="number" min="0" max="59" value="${second}">
+  </div>
+</div>
 
     <div class="actions">
       <button class="secondary" onclick="modalClose()">キャンセル</button>
