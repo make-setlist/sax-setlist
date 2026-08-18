@@ -220,9 +220,25 @@ function renderEvents(){
  if(!db.events.length)h+=`<div class="empty">演奏会を登録してください。</div>`;h+=`</div>`;document.getElementById('events').innerHTML=h
 }
 function selectEvent(id){current=id;tab('set');render()}
-function renderSet(){
+function updateStartTime(value){
+  if(!value) return;
+
+  const eventData = ev();
+
+  if(!eventData) return;
+
+  if(eventData.start === value) return;
+
+  eventData.start = value;
+
+  save();
+  render();
+}
+
+  
+  function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
- let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save()">
+ let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${esc(e.start)}" oninput="updateStartTime(this.value)" onchange="updateStartTime(this.value)" onblur="updateStartTime(this.value)">
  <label>MC時間（1回あたり）</label>
  <div class="muted">${fmt(e.mcSec || 0)}</div>
  </div>`;
