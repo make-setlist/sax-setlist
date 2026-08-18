@@ -118,7 +118,7 @@ const supabaseClient = window.supabase.createClient(
 <div class="tabs">
 <button id="tEvents" class="active" onclick="tab('events')">演奏会</button>
 <button id="tSet" onclick="tab('set')">セットリスト</button>
-<button id="t" onclick="tab('')">曲ライブラリ</button>
+<button id="tSongs" onclick="tab('songs')">曲ライブラリ</button>
 <button id="tSchedule" onclick="tab('schedule')">進行表</button>
 </div>
 <section id="events"></section><section id="set" class="hidden"></section>
@@ -133,7 +133,7 @@ const supabaseClient = window.supabase.createClient(
 const K='sax_setlist_v2';
 
 let db=JSON.parse(localStorage.getItem(K)||'null')||{
-  songs[{id
+  songs[],
   events:[]
 };
   normalizeData();
