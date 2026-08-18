@@ -338,10 +338,18 @@ function setStartTime(){
  document.getElementById('set').innerHTML=h
 }
 let drag=null;function drop(to){if(drag===null||drag===to)return;let e=ev(),a=e.items.splice(drag,1)[0];e.items.splice(to,0,a);drag=null;save();render()}
+
 function renderSongs(){
- let h=`<div class="card"><div class="row"><b>曲ライブラリ</b><button onclick="openSong()">＋ 曲を追加</button></div>`;
- db.songs.forEach(s=>h+=`<div class="item"><div class="row"><div><div class="title">${esc(s.name)}</div><div class="muted">${fmt(s.sec)}　${esc(s.ensemble||'')}</div></div><button class="secondary" onclick="editSong(${s.id})">編集</button></div></div>`);
- h+=`</div>`;document.getElementById('songs').innerHTML=h
+  let sortedSongs = [...db.songs].sort((a, b) =>
+    (a.name || '').localeCompare((b.name || ''), 'ja')
+  );
+
+  let h=`<div class="card"><div class="row"><b>曲ライブラリ</b><button onclick="openSong()">＋ 曲を追加</button></div>`;
+
+  sortedSongs.forEach(s=>h+=`<div class="item"><div class="row"><div><div class="title">${esc(s.name)}</div><div class="muted">${fmt(s.sec)}　${esc(s.ensemble||'')}</div></div><button class="secondary" onclick="editSong(${s.id})">編集</button></div></div>`);
+
+  h+=`</div>`;
+  document.getElementById('songs').innerHTML=h;
 }
 function renderSchedule(){
   let e=ev();
