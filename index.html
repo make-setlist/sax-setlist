@@ -222,7 +222,7 @@ function renderEvents(){
 function selectEvent(id){current=id;tab('set');render()}
 function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
- let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save();render()">
+ let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${e.start}" onchange="e.start=this.value;save();>
  <label>MC時間（1回あたり）</label>
  <div class="muted">${fmt(e.mcSec || 0)}</div>
  </div>`;
