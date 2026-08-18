@@ -254,12 +254,65 @@ function updateStartTime(value){
   render();
 }
 
+  function openStartTimePicker(){
+  const eventData = ev();
+
+  if(!eventData) return;
+
+  let [hour, minute] = eventData.start.split(':');
+
+  let hourOptions = '';
+  for(let h = 0; h < 24; h++){
+    const v = String(h).padStart(2, '0');
+    hourOptions += `<option value="${v}" ${v === hour ? 'selected' : ''}>${v}時</option>`;
+  }
+
+  let minuteOptions = '';
+  for(let m = 0; m < 60; m++){
+    const v = String(m).padStart(2, '0');
+    minuteOptions += `<option value="${v}" ${v === minute ? 'selected' : ''}>${v}分</option>`;
+  }
+
+  modal(`
+    ${modalTitle('開演時刻を設定')}
+
+    <div class="time-picker">
+      <div>
+        <label>時</label>
+        <select id="startHour">
+          ${hourOptions}
+        </select>
+      </div>
+
+      <div>
+        <label>分</label>
+        <select id="startMinute">
+          ${minuteOptions}
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" onclick="modalClose()">キャンセル</button>
+      <button onclick="setStartTime()">設定</button>
+    </div>
+  `);
+}
+
+function setStartTime(){
+  const h = document.getElementById('startHour').value;
+  const m = document.getElementById('startMinute').value;
+
+  updateStartTime(`${h}:${m}`);
+
+  modalClose();
+}
   
   function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
  let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div>
  <label>開演時刻</label>
- <button class="secondary" onclick="openStartTimePicker()">
+ <button class="secondary time-display-button" onclick="openStartTimePicker()">
   ${esc(e.start)}
 </button>
  <label>MC時間（1回あたり）</label>
