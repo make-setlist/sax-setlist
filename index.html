@@ -238,7 +238,7 @@ function updateStartTime(value){
   
   function renderSet(){
  let e=ev();if(!e){document.getElementById('set').innerHTML='';return}
- let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${esc(e.start)}" oninput="updateStartTime(this.value)" onchange="updateStartTime(this.value)" onblur="updateStartTime(this.value)">
+ let t=totals(),h=`<div class="card"><div class="row"><b>${esc(e.name)}</b><button class="secondary" onclick="editEvent()">編集</button></div><label>開演時刻</label><input type="time" value="${esc(e.start)}" onchange="updateStartTime(this.value)">
  <label>MC時間（1回あたり）</label>
  <div class="muted">${fmt(e.mcSec || 0)}</div>
  </div>`;
